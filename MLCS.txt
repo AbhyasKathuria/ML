@@ -1,0 +1,201 @@
+1. Linear Regression
+
+Current lab manual code is PERFECT already.
+
+Only memorize this core:
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+X = np.array([1,2,3,4,5]).reshape(-1,1)
+y = np.array([35,40,50,60,70])
+
+model = LinearRegression()
+model.fit(X,y)
+
+pred = model.predict(X)
+
+print("Slope:", model.coef_[0])
+print("Intercept:", model.intercept_)
+
+plt.scatter(X,y)
+plt.plot(X,pred)
+plt.show()
+
+THIS is exam-safe.
+
+2. Logistic Regression (Binary)
+
+Teacher expects:
+
+dataset
+split
+accuracy
+confusion matrix
+
+So your final version should be:
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+data = pd.read_csv("diabetes.csv")
+
+X = data.drop("Outcome", axis=1)
+y = data["Outcome"]
+
+X_train,X_test,y_train,y_test = train_test_split(
+    X,y,test_size=0.2
+)
+
+model = LogisticRegression(max_iter=200)
+model.fit(X_train,y_train)
+
+y_pred = model.predict(X_test)
+
+print("Accuracy:", accuracy_score(y_test,y_pred))
+
+SHORT + teacher-compatible.
+
+3. Logistic Regression (Multiclass)
+
+Use iris dataset. Keep accuracy.
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+iris = load_iris()
+
+X = iris.data
+y = iris.target
+
+X_train,X_test,y_train,y_test = train_test_split(
+    X,y,test_size=0.3
+)
+
+model = LogisticRegression(max_iter=200)
+model.fit(X_train,y_train)
+
+y_pred = model.predict(X_test)
+
+print("Accuracy:", accuracy_score(y_test,y_pred))
+4. PCA
+
+KEEP StandardScaler. Very important.
+
+Teacher clearly expects preprocessing concepts.
+
+Final short version:
+
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+iris = load_iris()
+
+X = iris.data
+
+X = StandardScaler().fit_transform(X)
+
+pca = PCA(n_components=2)
+
+result = pca.fit_transform(X)
+
+print(result)
+5. Bayesian Optimization
+
+This is the ONLY difficult one.
+
+Your teacher uses:
+
+Optuna
+SVC
+Pipeline
+
+DO NOT memorize full graph section.
+
+Memorize ONLY this:
+
+import optuna
+from sklearn.datasets import load_diabetes
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+data = load_diabetes()
+
+X = data.data
+y = (data.target > data.target.mean()).astype(int)
+
+X_train,X_test,y_train,y_test = train_test_split(
+    X,y,test_size=0.2
+)
+
+def objective(trial):
+    C = trial.suggest_float("C",0.01,10)
+    
+    model = SVC(C=C)
+    model.fit(X_train,y_train)
+
+    pred = model.predict(X_test)
+
+    return accuracy_score(y_test,pred)
+
+study = optuna.create_study(direction="maximize")
+study.optimize(objective,n_trials=10)
+
+print(study.best_params)
+
+THIS is enough.
+
+6. Random Forest
+
+KEEP split + accuracy.
+
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+digits = load_digits()
+
+X = digits.data
+y = digits.target
+
+X_train,X_test,y_train,y_test = train_test_split(
+    X,y,test_size=0.2
+)
+
+model = RandomForestClassifier()
+
+model.fit(X_train,y_train)
+
+pred = model.predict(X_test)
+
+print("Accuracy:", accuracy_score(y_test,pred))
+7. KNN
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+digits = load_digits()
+
+X = digits.data
+y = digits.target
+
+X_train,X_test,y_train,y_test = train_test_split(
+    X,y,test_size=0.2
+)
+
+model = KNeighborsClassifier()
+
+model.fit(X_train,y_train)
+
+pred = model.predict(X_test)
+
+print("Accuracy:", accuracy_score(y_test,pred))
